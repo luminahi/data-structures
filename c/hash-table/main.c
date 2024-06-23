@@ -3,7 +3,7 @@
 #include <string.h>
 #include <data.h>
 
-#define TABLE_SIZE 16
+#define TABLE_SIZE 8
 
 typedef struct Node {
     char key[4];
@@ -21,6 +21,7 @@ Node* createNode(char*, char*);
 void insertNode(HashTable*, char*, char*);
 void printList(Node*);
 void printTable(HashTable*);
+void destroyTable(HashTable**);
 
 Node* createNode(char* key, char* text) {
     Node* node = (Node*) malloc(sizeof(Node));
@@ -52,7 +53,7 @@ unsigned int hashIndex(char* string) {
 }
 
 HashTable* createTable() {
-    HashTable * hashTable = (HashTable*) malloc(sizeof(HashTable));
+    HashTable* hashTable = (HashTable*) malloc(sizeof(HashTable));
     for (int i = 0; i < TABLE_SIZE; i++) {
         hashTable->list[i] = NULL;
     }
@@ -69,17 +70,18 @@ void printList(Node* node) {
 }
 
 void printTable(HashTable* hashTable) {
+    if (!hashTable) return;
     for (int i = 0; i < TABLE_SIZE; i++) {
         printf("Index: [%d]\n", i);
         printList(hashTable->list[i]);
     }
 }
 
-void processData(HashTable *hashTable, char *buffer) {
-    char *key = (char*) malloc(sizeof(char) * 4);
+void processData(HashTable* hashTable, char* buffer) {
+    char* key = (char*) malloc(sizeof(char) * 4);
     int i = 0, j = 0;
     key[3] = '\0'; 
-    char *line = (char*) malloc(sizeof(char) * 32);
+    char* line = (char*) malloc(sizeof(char) * 32);
     while (buffer[i] != '\0') {
         while (buffer[i] != '\n') {
             line[j] = buffer[i];
@@ -97,13 +99,33 @@ void processData(HashTable *hashTable, char *buffer) {
     free(line);
 }
 
+void destroyTable(HashTable** hashTable) {
+    if (!(*hashTable)) return;
+    Node* temp = NULL;
+    Node* aux = NULL;
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        temp = (*hashTable)->list[i];
+        while (temp) {
+            aux = temp;
+            temp = temp->next;
+            free(aux);
+        }
+        (*hashTable)->list[i] = NULL;
+    }
+
+    free(*hashTable);
+    (*hashTable) = NULL;
+}
+
 int main(int argc, char* argv[]) {
     HashTable* hashTable = createTable();
     
-    char *buffer = readDataFromFile("data.txt");
+    char* buffer = readDataFromFile("data.txt");
     processData(hashTable, buffer);
-
     free(buffer);
+
+    printTable(hashTable);
+    destroyTable(&hashTable);
     printTable(hashTable);
     
     return 0;
