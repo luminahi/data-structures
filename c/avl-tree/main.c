@@ -11,9 +11,13 @@ typedef struct AVLNode {
     int height;
 } AVLNode;
 
+AVLNode* rightRotate(AVLNode*);
+AVLNode* leftRotate(AVLNode*);
+AVLNode* insert(AVLNode*, int);
 AVLNode* createNode(int);
 int height(AVLNode*);
 int getBalance(AVLNode*);
+void printTree(AVLNode*);
 
 int height(AVLNode* node) {
     if (node == NULL) return 0;
@@ -38,7 +42,31 @@ AVLNode* insert(AVLNode* node, int value) {
         return node;
 
     node->height = 1 + MAX(height(node->left), height(node->right));
+    // printf("%d\n", node->height);
+    int balance = getBalance(node);
 
+    // Left Left Case
+    if (balance > 1 && value < node->left->value) {
+        return rightRotate(node);
+    }
+
+    // Left Right Case
+    if (balance > 1 && value > node->left->value) {
+        node->left = leftRotate(node->left);
+        return rightRotate(node);
+    }
+
+    // Right Right Case
+    if (balance < -1 && value > node->right->value) {
+        return leftRotate(node);
+    }
+
+    // Right Left Case
+    if (balance < -1 && value < node->right->value) {
+        node->right = rightRotate(node->right);
+        return leftRotate(node);
+    }
+    
     return node;
 }
 
@@ -79,8 +107,13 @@ AVLNode* leftRotate(AVLNode* x) {
 
 void printTree(AVLNode* node) {
     if (node) {
-        printf("Value: %d \nHeight: %d\n\n", node->value, node->height);
-        
+        int balance = getBalance(node);
+        printf(
+            "Value: %d \nHeight: %d Balance: %d\n\n", 
+            node->value, 
+            node->height, 
+            balance);
+
         printTree(node->left);
         printTree(node->right);
     }
@@ -89,13 +122,22 @@ void printTree(AVLNode* node) {
 int main(int argc, char* argv[]) {
     AVLNode* root = NULL;
 
-    root = insert(root, 50);
-    root = insert(root, 20);
-    root = insert(root, 80);
-    root = insert(root, 10);
-    root = insert(root, 15);
-    root = insert(root, 0);
-    root = insert(root, -5);
+    // root = insert(root, 50);
+    // root = insert(root, 20);
+    // root = insert(root, 80);
+    // root = insert(root, 10);
+    // root = insert(root, 15);
+    // root = insert(root, 0);
+    // root = insert(root, -5);
+
+    // for (int i = 0; i < 5; i++) {
+        // root = insert(root, i + 1);
+    // }
+
+    root = insert(root, 1);
+    root = insert(root, 2);
+    root = insert(root, 3);
+
 
     printTree(root);
     return 0;
