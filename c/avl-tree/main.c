@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define MAX(x, y) ((x >= y) ? x : y);
+#define MAX(x, y) ((x >= y) ? x : y)
 
 typedef struct AVLNode {
     int value;
@@ -86,8 +86,8 @@ AVLNode* rightRotate(AVLNode* y) {
     x->right = y;
     y->left = T2;
        
-    y->height = MAX(height(y->left), height(y->right)) + 1;
-    x->height = MAX(height(x->left), height(x->right)) + 1;
+    y->height = 1 + MAX(height(y->left), height(y->right));
+    x->height = 1 + MAX(height(x->left), height(x->right));
 
     return x;
 }
@@ -99,8 +99,8 @@ AVLNode* leftRotate(AVLNode* x) {
     y->left = x;
     x->right = T2;
 
-    x->height = MAX(height(x->left), height(x->right)) + 1;
-    y->height = MAX(height(y->left), height(y->right)) + 1;
+    x->height = 1 + MAX(height(x->left), height(x->right));
+    y->height = 1 + MAX(height(y->left), height(y->right));
     
     return y;
 }
@@ -122,22 +122,9 @@ void printTree(AVLNode* node) {
 int main(int argc, char* argv[]) {
     AVLNode* root = NULL;
 
-    // root = insert(root, 50);
-    // root = insert(root, 20);
-    // root = insert(root, 80);
-    // root = insert(root, 10);
-    // root = insert(root, 15);
-    // root = insert(root, 0);
-    // root = insert(root, -5);
-
-    // for (int i = 0; i < 5; i++) {
-        // root = insert(root, i + 1);
-    // }
-
-    root = insert(root, 1);
-    root = insert(root, 2);
-    root = insert(root, 3);
-
+    for (int i = 0; i < 1000; i++) {
+        root = insert(root, i + 1);
+    }
 
     printTree(root);
     return 0;
