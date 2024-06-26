@@ -10,6 +10,7 @@ typedef struct {
 void insert(MinHeap*, int);
 void swap(int*, int*);
 void heapifyUp(MinHeap*, int);
+void heapifyDown(MinHeap*, int);
 void printHeap(MinHeap*);
 
 void insert(MinHeap* heap, int value) {
@@ -31,19 +32,50 @@ void swap(int* x, int* y) {
 
 void heapifyUp(MinHeap* heap, int index) {
     int parent = (index - 1) / 2;
-    printf("Child: %d - Parent: %d\n", index, parent);
     if (parent >= 0 && heap->data[index] < heap->data[parent]) {
         swap(&heap->data[index], &heap->data[parent]);
         heapifyUp(heap, parent);
     }
 }
 
+void heapifyDown(MinHeap* heap, int index) {
+    int smallest = index;
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+
+    if (left < heap->size && heap->data[left] < heap->data[smallest])
+        smallest = left;
+
+    if (right < heap->size && heap->data[right] < heap->data[smallest])
+        smallest = right;
+    
+    if (smallest != index) {
+        swap(&heap->data[smallest], &heap->data[index]);
+        heapifyDown(heap, smallest);
+    }
+}
+
 void printHeap(MinHeap* heap) {
     printf("Size: %d\n", heap->size);
     
-    for (int i = 0; i < MAX_SIZE; i++) {
+    for (int i = 0; i < heap->size; i++) {
         printf("[%d] ", heap->data[i]);
     }
+    printf("\n\n");
+}
+
+int extractMin(MinHeap* heap) {
+    if (heap->size <= 0) {
+        printf("Heap is empty\n");
+        return -1;
+    }
+
+    int value = heap->data[0];
+    heap->data[0] = heap->data[heap->size - 1];
+    heap->data[heap->size - 1] = 0;
+    heap->size--;
+    heapifyDown(heap, 0);
+    return value;
 }
 
 int main(int argc, char * argv[]) {
@@ -58,6 +90,10 @@ int main(int argc, char * argv[]) {
     insert(&heap, 50);
     insert(&heap, 60);
     insert(&heap, 10);
+
+    printHeap(&heap);
+
+    extractMin(&heap);
 
     printHeap(&heap);
 
