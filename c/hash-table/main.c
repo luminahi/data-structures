@@ -106,10 +106,9 @@ HashTable* createTable() {
 }
 
 void printList(Node* node) {
-    Node* temp = node;
-    while (temp) {
-        printf("Key: %s :::: Value: %s\n", temp->key, temp->text);
-        temp = temp->next;
+    while (node) {
+        printf("Key: %s :::: Value: %s\n", node->key, node->text);
+        node = node->next;
     }
 }
 
