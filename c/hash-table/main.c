@@ -67,6 +67,10 @@ HashTable* createTable();
  */
 void destroyTable(HashTable**);
 
+Node* searchTable(HashTable*, char*);
+
+Node* searchList(HashTable*, unsigned int, char*);
+
 Node* createNode(char* key, char* text) {
     Node* node = (Node*) malloc(sizeof(Node));
     strcpy(node->key, key);
@@ -160,6 +164,22 @@ void destroyTable(HashTable** hashTable) {
     (*hashTable) = NULL;
 }
 
+Node* searchTable(HashTable* table, char* key) {
+    unsigned int index = hashIndex(key);
+    return searchList(table, index, key);
+}
+
+Node* searchList(HashTable* table, unsigned int index, char* key) {
+    Node* iterator = table->list[index];
+    while (iterator) {
+        if (strncmp(iterator->key, key, 3) == 0) {
+            return iterator;
+        }
+        iterator = iterator->next;
+    }
+    return NULL;
+}
+
 int main(int argc, char* argv[]) {
     HashTable* hashTable = createTable();
     
@@ -168,6 +188,14 @@ int main(int argc, char* argv[]) {
     free(buffer);
 
     printTable(hashTable);
+    
+    Node* result = searchTable(hashTable, "Gem");
+    if (result)
+        printf("<Key: %s> <Value: %s>\n", result->key, result->text);
+
+    result = searchTable(hashTable, "Juu");
+    if (result)
+        printf("<Key: %s> <Value: %s>\n", result->key, result->text);
 
     destroyTable(&hashTable);
     
