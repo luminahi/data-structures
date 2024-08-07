@@ -1,84 +1,55 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <stdio.h>
+#include "queue.h"
 
-typedef struct node {
-    const char *name;
-    struct node *next;
-    struct node *prev;
-} node;
-
-typedef struct ptr {
-    struct node *head;
-    struct node *tail;
-} ptr;
-
-void enqueue(ptr *queue, const char *name) {
-    node *no = (node*) malloc(sizeof(node));
-    no->name = name;
-    no->prev = NULL;
-    if (!(queue->tail)) {
-        no->next = NULL;
-        queue->head = no;
-    } else {
-        queue->tail->prev = no;
-        no->next = queue->tail;
-    }
-    queue->tail = no;
+Node* create_node(const char* name) {
+    Node* node = (Node*) malloc(sizeof(Node));
+    node->name = name;
+    node->prev = NULL;
+    node->next = NULL;
 }
 
-void dequeue(ptr *queue) {
-    if (queue->head && !queue->head->prev) {
-        free(queue->head);
+void enqueue(Queue *queue, const char* name) {
+    Node* node = create_node(name);
+    
+    if (queue->size == 0) {
+        queue->head = node;
+    } else {
+        queue->tail->prev = node;
+        node->next = queue->tail;
+    }
+
+    queue->tail = node;
+    queue->size++;
+}
+
+void dequeue(Queue* queue) {
+    if (queue->size <= 0) return;
+    Node* temp = queue->head;
+
+    if (queue->size == 1) {
         queue->head = NULL;
         queue->tail = NULL;
-    } else if (queue->head && queue->head->prev) {
-        node *temp = queue->head;
+    } else {
         queue->head->prev->next = NULL;
         queue->head = queue->head->prev;
-        free(temp);
     }
+    
+    queue->size--;
+    free(temp);
 }
 
-void clearQueue(ptr *queue) {
+void destroy_queue(Queue* queue) {
     while (queue->head) {
         dequeue(queue);
     }
 }
 
-void printQueue(node *temp) {
-    if (temp && temp->next) {
-        while (temp) {
-            printf("%s\n", temp->name);
-            temp = temp->next; 
-        }
-    } else if (temp && temp->prev) {
-        while (temp) {
-            printf("%s\n", temp->name);
-            temp = temp->prev;
-        }
-    }
-}
-
-int main(int argc, const char * argv[]) {
-    ptr *queue = (ptr*) malloc(sizeof(ptr));
-    queue->head = NULL;
-    queue->tail = NULL;
-
-    enqueue(queue, "c");
-    enqueue(queue, "c++");
-    enqueue(queue, "rust");
-    enqueue(queue, "python3");
-    enqueue(queue, "java");
-    enqueue(queue, "javascript");
-
-    clearQueue(queue);
+void print_queue(Queue queue) {
+    Node* temp = queue.tail;
     
-    printQueue(queue->tail);
-    puts("--------");
-    printQueue(queue->head);
-
-    printf("%p %p\n", queue->head, queue->tail);
-
-    return 0;
+    while (temp) {
+        printf("%s\n", temp->name);
+        temp = temp->next; 
+    }
 }
