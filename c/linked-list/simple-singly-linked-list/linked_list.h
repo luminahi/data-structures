@@ -21,5 +21,7 @@ void print_list(LinkedList* list);
 
 void destroy_list(LinkedList* list);
 
+LinkedList* init_list();
 
 #endif
+

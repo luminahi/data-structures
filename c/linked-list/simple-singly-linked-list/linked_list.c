@@ -61,3 +61,12 @@ void print_list(LinkedList* list) {
     }
     printf("NULL\n");
 }
+
+LinkedList* init_list() {
+    LinkedList* list = (LinkedList*) malloc(sizeof(LinkedList));
+    list->HEAD = NULL;
+    list->length = 0;
+
+    return list;
+}
+
